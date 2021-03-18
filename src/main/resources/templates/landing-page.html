@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns="https://www.thymeleafe.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>High Chart Example - Spring Boot</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://code.highcharts.com/css/highcharts.css" />
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+</head>
+<body>
+	<div align="center">
+		<h2>Spring Boot Highcharts Example Using Data from Database</h2>
+	</div>
+	<figure class="highcharts-figure">
+		<div id="container-bar"></div>
+	</figure>
+	<script type="text/javascript">
+  
+                    $.ajax({
+                        url : "/get-data",
+                        success : function(result) {
+                        console.log(result)
+                        var formatteddata=[]
+                        for(var key in result){
+                        	var singleObject={
+                        		name: '',
+                        		data: []
+                        	
+                        	}
+                        	singleObject.name=key.toUpperCase();
+                        	for(var i=0; i<result[key].length; i++){
+                        		singleObject.data.push(parseFloat(result[key][i].gpa));
+                        	}                        
+                        	formatteddata.push(singleObject);
+                        }
+                     	drawChart(formatteddata);
+                        }
+                    });
+                
+ 
+        function drawChart(formatteddata) {
+           Highcharts.chart('container-bar', {
+				chart : {
+                    type : 'line',
+                    styledMode : true
+                },
+   				title: {
+        			text: 'Semester wise CGPA Comparison'
+    			},
+
+    			subtitle: {
+        			text: 'Source: University'
+    			},
+
+    			yAxis: {
+        			title: {
+            			text: 'CGPA'
+        			}
+    			},
+
+    			xAxis: {
+        			accessibility: {
+            			rangeDescription: 'Semester: I-VII'
+        			},
+        			title: {
+        				text: 'Semesters'
+        			}
+    			},
+
+    			legend: {
+        			layout: 'vertical',
+        			align: 'right',
+        			verticalAlign: 'middle'
+    			},
+
+				plotOptions: {
+        			series: {
+            			label: {
+                			connectorAllowed: false
+            			},
+            			pointStart: 1
+        			}
+    			},
+    			series: formatteddata,
+
+    			responsive: {
+        			rules: [{
+            			condition: {
+                			maxWidth: 500
+            			},
+            			
+            	chartOptions: {
+               			legend: {
+                    		layout: 'horizontal',
+                    		align: 'center',
+                    		verticalAlign: 'bottom'
+                			}
+            			}
+        			}]
+    			}	
+
+			});	
+			}
+    </script>
+</body>
+</html>
